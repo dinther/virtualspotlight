@@ -1,12 +1,13 @@
-const MAX_GOBOS = 4;
+const MAX_GOBOS = 12;
 
 export class SpotLight {
     #parent;
-    #options = {gobo: 0, x: 0.5, y:0.5, size: 0.4, focus: 1, inertia: 2};
+    #options = {gobo: 0, x: 0.5, y:0.5, size: 0.4, focus: 1, inertia: 2, spinRate: 20};
     #gobo = 0;
     #x;
     #y;
     #size;
+    #angle = 0;
     #focus = 0;
     #hue = 0;
     #sat = 0.5;
@@ -34,22 +35,32 @@ export class SpotLight {
     #setGobo(number){
         console.log(number);
         switch(number){
-            case 0: this.#img.src = 'gobos/circle.png'; break;
-            case 1: this.#img.src = 'gobos/window.png'; break;
-            case 2: this.#img.src = 'gobos/flowers.png'; break;
-            case 3: this.#img.src = 'gobos/red_circle.png'; break;
-            default: this.#img.src = 'gobos/circle.png';
+            case 0: this.#img.src = 'gobos/white_circle.png'; break;
+            case 1: this.#img.src = 'gobos/warm_white_circle.png'; break;
+            case 2: this.#img.src = 'gobos/red_circle.png'; break;
+            case 3: this.#img.src = 'gobos/light_red_circle.png'; break;
+            case 4: this.#img.src = 'gobos/magenta_circle.png'; break;
+            case 5: this.#img.src = 'gobos/light_magenta_circle.png'; break;    
+            case 6: this.#img.src = 'gobos/blue_circle.png'; break;
+            case 7: this.#img.src = 'gobos/light_blue_circle.png'; break;                        
+            case 8: this.#img.src = 'gobos/window.png'; break;
+            case 9: this.#img.src = 'gobos/fan.png'; break;
+            case 10: this.#img.src = 'gobos/flowers.png'; break;
+            case 11: this.#img.src = 'gobos/universe.png'; break;
+            default: this.#img.src = 'gobos/white_circle.png';
         }
     }
 
 
-    #setLight(x, y, size){
+    #setLight(x, y, size, angle){
         this.#x = x;
         this.#y = y;
         this.#size = size;
+        this.#angle = angle;
         this.#img.style.left = (this.#x*100)+'%';
         this.#img.style.top = (this.#y*100)+'%';
         this.#img.style.height = (size*100)+'%';
+        this.#img.style.transform = this.#angle != 0? 'translate(-50%, -50%) rotate('+this.#angle+'deg)' : '';
     }
 
     #handleMove(event){
@@ -99,8 +110,9 @@ export class SpotLight {
 
     update(deltaTime){
         if (deltaTime == 0){
-            this.#setLight(this.#options.x, this.#options.y, this.#options.size);
+            this.#setLight(this.#options.x, this.#options.y, this.#options.size, this.#angle);
         } else {
+            let angle = this.#angle + (this.#options.spinRate * deltaTime);
             let factor = deltaTime * this.#options.inertia; 
             let deltaX = this.#target.x - this.#x;
             let deltaY = this.#target.y - this.#y;
@@ -108,7 +120,8 @@ export class SpotLight {
             this.#setLight(
                 this.#x - (deltaX * factor),
                 this.#y - (deltaY * factor),
-                this.#size - (deltaSize * factor * 0.5)
+                this.#size - (deltaSize * factor * 0.5),
+                angle
             );
         }
     }
