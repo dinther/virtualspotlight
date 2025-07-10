@@ -17,4 +17,8 @@ Todo:
 - Add multi touch for multiple spotlights
 - Add animation such as rotation and movement
 
+# online demo
+
+https://dinther.github.io/virtualspotlight/
+
 
