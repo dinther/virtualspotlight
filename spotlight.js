@@ -1,3 +1,5 @@
+const MAX_GOBOS = 3;
+
 export class SpotLight {
     #parent;
     #options = {gobo: 0, x: 0.5, y:0.5, size: 0.4, focus: 1, inertia: 2};
@@ -25,7 +27,7 @@ export class SpotLight {
     }
 
     #setGobo(number){
-        
+        console.log(number);
         switch(number){
             case 0: this.#img.src = 'gobos/circle.png'; break;
             case 1: this.#img.src = 'gobos/window.png'; break;
@@ -53,16 +55,19 @@ export class SpotLight {
 
     #handleMousewheel(event){
         if (event.ctrlKey){
-            this.#focus = Math.max(0, this.#focus + event.deltaY * 0.01);
-            this.#img.style.filter = 'blur('+this.#focus+'px)';
+            event.preventDefault();
+            this.#focus = Math.min(Math.max(0, this.#focus + event.deltaY * 0.01), 100);
+            if (this.#focus > 0) this.#img.style.filter = 'blur('+this.#focus+'px)';
+            else this.#img.style.filter = '';
         } else if (event.shiftKey){
-            if (event.deltaY > 0) this.#gobo++; 
+            event.preventDefault();
+            if (event.deltaY > 0) this.#gobo = Math.min(MAX_GOBOS - 1, this.#gobo + 1); 
             if (event.deltaY < 0) this.#gobo = Math.max(0, this.#gobo - 1);
             this.#setGobo(this.#gobo);
         } else {
+            event.preventDefault();
             if (event.deltaY > 0) this.#target.size *= 1.05;
             if (event.deltaY < 0) this.#target.size *= 0.95;
-            console.log(this.#target.size);
         }
     }
 
@@ -74,7 +79,6 @@ export class SpotLight {
             let deltaX = this.#target.x - this.#x;
             let deltaY = this.#target.y - this.#y;
             let deltaSize = this.#target.size - this.#size;
-            let deltaFocus = this.#target.focus - this.#focus;
             this.#setLight(
                 this.#x - (deltaX * factor),
                 this.#y - (deltaY * factor),
