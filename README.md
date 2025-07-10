@@ -8,12 +8,15 @@ In a theatre you can use a stage projector to project the virtual spot lights.
 - Mouse scroll wheel adjusts the size of the light
 - CTRL + mouse scrollwheel adjusts the focus of the light
 - SHIFT + mouse scrollwheel adjusts the GOBO used.
+- ALT + mouse scrollwheel adjusts hue.
+- SHIFT + ALT + mouse scrollwheel adjusts saturation.
+- SHIFT + CTRL + mouse scrollwheel adjusts tilt.
 
 Currently there are only 3 gobos but it is easy enough to add more.
 
 Todo:
 
-- Add ALT + mouse scrollwheel to adjust intensity
+- Add means to adjust intensity
 - Add multi touch for multiple spotlights
 - Add animation such as rotation and movement
 
