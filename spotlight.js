@@ -1,4 +1,4 @@
-const MAX_GOBOS = 3;
+const MAX_GOBOS = 4;
 
 export class SpotLight {
     #parent;
@@ -8,6 +8,11 @@ export class SpotLight {
     #y;
     #size;
     #focus = 0;
+    #hue = 0;
+    #sat = 0.5;
+    #blurfilter = '';
+    #huefilter = '';
+    #satfilter = '';
     #img;
     #target;
     constructor(parent, options) {
@@ -32,6 +37,7 @@ export class SpotLight {
             case 0: this.#img.src = 'gobos/circle.png'; break;
             case 1: this.#img.src = 'gobos/window.png'; break;
             case 2: this.#img.src = 'gobos/flowers.png'; break;
+            case 3: this.#img.src = 'gobos/red_circle.png'; break;
             default: this.#img.src = 'gobos/circle.png';
         }
     }
@@ -54,17 +60,36 @@ export class SpotLight {
         }
     }
 
+    #setFilter(){
+        this.#img.style.filter = this.#blurfilter + ' ' + this.#huefilter + ' ' + this.#satfilter;
+    }
+
     #handleMousewheel(event){
-        if (event.ctrlKey){
+        if (event.altKey && event.shiftKey){
+            event.preventDefault();
+            this.#sat = Math.max(0, Math.min(1, this.#sat - event.deltaY * 0.0002));
+            if (this.#sat != 0.5) this.#satfilter = 'saturate('+this.#sat+')';
+            else this.#satfilter = '';
+            this.#setFilter();
+        } else if (event.ctrlKey){
             event.preventDefault();
             this.#focus = Math.min(Math.max(0, this.#focus - event.deltaY * 0.01), 100);
-            if (this.#focus > 0) this.#img.style.filter = 'blur('+this.#focus+'px)';
-            else this.#img.style.filter = '';
+            if (this.#focus > 0) this.#blurfilter = 'blur('+this.#focus+'px)';
+            else this.#blurfilter = '';
+            this.#setFilter();
         } else if (event.shiftKey){
             event.preventDefault();
             if (event.deltaY > 0) this.#gobo = Math.min(MAX_GOBOS - 1, this.#gobo + 1); 
             if (event.deltaY < 0) this.#gobo = Math.max(0, this.#gobo - 1);
             this.#setGobo(this.#gobo);
+        } else if (event.altKey){
+            event.preventDefault();
+            this.#hue = this.#hue - event.deltaY * 0.1;
+            while(this.#hue > 360) this.#hue -= 360;
+            while(this.#hue < 0) this.#hue += 360;
+            if (this.#hue != 0) this.#huefilter = 'hue-rotate('+this.#hue+'deg)';
+            else this.#huefilter = '';
+            this.#setFilter();
         } else {
             event.preventDefault();
             if (event.deltaY < 0) this.#target.size *= 1.1;
