@@ -40,13 +40,14 @@ export class SpotLight {
     #setLight(x, y, size){
         this.#x = x;
         this.#y = y;
-        this.#size = size; //Math.max(Math.min(0.15, size), 3);
+        this.#size = size;
         this.#img.style.left = (this.#x*100)+'%';
         this.#img.style.top = (this.#y*100)+'%';
         this.#img.style.height = (size*100)+'%';
     }
 
-    #handleMove(event){ 
+    #handleMove(event){
+        event.preventDefault();
         if (event.buttons == 1){    
             this.#target.x = event.clientX/this.#parent.offsetWidth;
             this.#target.y = event.clientY/this.#parent.offsetHeight;
@@ -56,7 +57,7 @@ export class SpotLight {
     #handleMousewheel(event){
         if (event.ctrlKey){
             event.preventDefault();
-            this.#focus = Math.min(Math.max(0, this.#focus + event.deltaY * 0.01), 100);
+            this.#focus = Math.min(Math.max(0, this.#focus - event.deltaY * 0.01), 100);
             if (this.#focus > 0) this.#img.style.filter = 'blur('+this.#focus+'px)';
             else this.#img.style.filter = '';
         } else if (event.shiftKey){
@@ -66,8 +67,8 @@ export class SpotLight {
             this.#setGobo(this.#gobo);
         } else {
             event.preventDefault();
-            if (event.deltaY > 0) this.#target.size *= 1.05;
-            if (event.deltaY < 0) this.#target.size *= 0.95;
+            if (event.deltaY < 0) this.#target.size *= 1.1;
+            if (event.deltaY > 0) this.#target.size *= 0.9;
         }
     }
 
@@ -82,7 +83,7 @@ export class SpotLight {
             this.#setLight(
                 this.#x - (deltaX * factor),
                 this.#y - (deltaY * factor),
-                this.#size - (deltaSize * factor * 0.3)
+                this.#size - (deltaSize * factor * 0.5)
             );
         }
     }
