@@ -1,0 +1,21 @@
+body {
+    margin: 0px;
+    font-family: sans-serif;
+    color: rgb(175, 175, 175);
+    background-color: #1a1a1a;
+    box-sizing: content-box;
+    height: 100vh;
+}
+
+.spotlight {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#container{
+  position: relative;
+  background-color: #000;
+  height: 100%;
+  overflow: hidden;
+}
