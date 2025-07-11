@@ -5,6 +5,8 @@ body {
     background-color: #000;
     box-sizing: content-box;
     height: 100vh;
+    user-select: none;
+
 }
 
 .spotlight {

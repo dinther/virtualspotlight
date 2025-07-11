@@ -1,12 +1,13 @@
-const MAX_GOBOS = 12;
+const MAX_GOBOS = 13;
 
 export class SpotLight {
     #parent;
-    #options = {gobo: 0, x: 0.5, y:0.5, size: 0.4, focus: 1, inertia: 2, spinRate: 20};
+    #options = {gobo: 0, x: 0.5, y:0.5, size: 0.4, tilt: 0, focus: 1, inertia: 2, spinRate: 20};
     #gobo = 0;
     #x;
     #y;
     #size;
+    #tilt = 0;
     #angle = 0;
     #focus = 0;
     #hue = 0;
@@ -14,6 +15,9 @@ export class SpotLight {
     #blurfilter = '';
     #huefilter = '';
     #satfilter = '';
+    #translate = 'translate(-50%, -50%)';
+    #rotateX = '';
+    #rotate = '';
     #img;
     #target;
     constructor(parent, options) {
@@ -26,6 +30,8 @@ export class SpotLight {
         });
         Object.assign(this.#options, options);
         this.#target = {x:this.#options.x, y:this.#options.y, size: this.#options.size, focus: this.#options.focus};
+        this.#tilt = this.#options.tilt;
+        this.#rotateX = this.#options.tilt !=0? ' rotateX('+this.#tilt+'deg) ' : ' ';
         this.#img = document.createElement('img');
         this.#img.classList.add('spotlight');
         this.#parent.appendChild(this.#img);
@@ -46,7 +52,8 @@ export class SpotLight {
             case 8: this.#img.src = 'gobos/window.png'; break;
             case 9: this.#img.src = 'gobos/fan.png'; break;
             case 10: this.#img.src = 'gobos/flowers.png'; break;
-            case 11: this.#img.src = 'gobos/universe.png'; break;
+            case 11: this.#img.src = 'gobos/spots.png'; break;
+            case 12: this.#img.src = 'gobos/universe.png'; break;
             default: this.#img.src = 'gobos/white_circle.png';
         }
     }
@@ -60,7 +67,8 @@ export class SpotLight {
         this.#img.style.left = (this.#x*100)+'%';
         this.#img.style.top = (this.#y*100)+'%';
         this.#img.style.height = (size*100)+'%';
-        this.#img.style.transform = this.#angle != 0? 'translate(-50%, -50%) rotate('+this.#angle+'deg)' : '';
+        this.#rotate = this.#angle != 0? 'rotate('+this.#angle+'deg) ' : '';
+        this.#img.style.transform = this.#translate + this.#rotateX + this.#rotate; 
     }
 
     #handleMove(event){
@@ -82,6 +90,10 @@ export class SpotLight {
             if (this.#sat != 0.5) this.#satfilter = 'saturate('+this.#sat+')';
             else this.#satfilter = '';
             this.#setFilter();
+        } else if (event.ctrlKey && event.shiftKey){
+            event.preventDefault();
+            this.#tilt = Math.max(-90, Math.min(90, this.#tilt - event.deltaY * 0.01));
+            this.#rotateX = this.#tilt !=0? ' rotateX('+this.#tilt+'deg) ' : ' ';
         } else if (event.ctrlKey){
             event.preventDefault();
             this.#focus = Math.min(Math.max(0, this.#focus - event.deltaY * 0.01), 100);
@@ -113,6 +125,8 @@ export class SpotLight {
             this.#setLight(this.#options.x, this.#options.y, this.#options.size, this.#angle);
         } else {
             let angle = this.#angle + (this.#options.spinRate * deltaTime);
+            while(angle > 360) angle -= 360;
+            while(angle < 0) angle += 360;
             let factor = deltaTime * this.#options.inertia; 
             let deltaX = this.#target.x - this.#x;
             let deltaY = this.#target.y - this.#y;
